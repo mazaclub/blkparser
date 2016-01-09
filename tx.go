@@ -4,7 +4,19 @@ import (
 	"encoding/binary"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
+	"github.com/btcsuite/btcd/wire"
 )
+
+const MazaMainNet wire.BitcoinNet = 0xdf03b5f8
+
+var MazaParams = chaincfg.Params{
+	Name:             "mazamainnet",
+	Net:              MazaMainNet,
+	DefaultPort:      "12835",
+	PubKeyHashAddrID: 0x32,
+	ScriptHashAddrID: 0x05,
+	PrivateKeyID:     0xe0,
+}
 
 type Tx struct {
 	Hash     string
@@ -111,7 +123,7 @@ func NewTxOut(txoutraw []byte) (txout *TxOut, offset int) {
 	txout.Pkscript = txoutraw[offset : offset+pkscript]
 	offset += pkscript
 
-	_, addrhash, _, err := txscript.ExtractPkScriptAddrs(txout.Pkscript, &chaincfg.MainNetParams)
+	_, addrhash, _, err := txscript.ExtractPkScriptAddrs(txout.Pkscript, &MazaParams)
 	if err != nil {
 		return
 	}
