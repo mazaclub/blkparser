@@ -3,7 +3,6 @@ package blkparser
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/hex"
 )
 
 type Block struct {
@@ -33,7 +32,7 @@ func NewBlock(rawblock []byte) (block *Block, err error) {
 	if !bytes.Equal(rawblock[4:36], []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}) {
 		block.Parent = HashString(rawblock[4:36])
 	}
-	block.MerkleRoot = hex.EncodeToString(rawblock[36:68])
+	block.MerkleRoot = HashString(rawblock[36:68])
 	block.BlockTime = binary.LittleEndian.Uint32(rawblock[68:72])
 	block.Bits = binary.LittleEndian.Uint32(rawblock[72:76])
 	block.Nonce = binary.LittleEndian.Uint32(rawblock[76:80])
@@ -42,6 +41,7 @@ func NewBlock(rawblock []byte) (block *Block, err error) {
 	txs, _ := ParseTxs(rawblock[80:])
 
 	block.Txs = txs
+	block.TxCnt = uint32(len(txs))
 
 	return
 }
